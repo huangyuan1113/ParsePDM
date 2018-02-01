@@ -14,9 +14,13 @@ import com.smshen.utils.Parser;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -27,26 +31,36 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class ContactEditorUI extends javax.swing.JFrame {
 
+    private javax.swing.JMenu jMenuAbout;
+    private javax.swing.JMenu jmenuFile;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jmengFileOpen;
+    private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JScrollPane jScrollPaneLeft;
+    private javax.swing.JScrollPane jScrollPaneRight;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTree jTree1;
+
     public ContactEditorUI() {
         initComponents();
     }
 
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPaneLeft = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        jScrollPaneRight = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jmenuFile = new javax.swing.JMenu();
+        jmengFileOpen = new javax.swing.JMenuItem();
+        jMenuItemExit = new javax.swing.JMenuItem();
+        jMenuAbout = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setExtendedState(6);
 
-        jScrollPane2.setViewportView(jTree1);
+        jScrollPaneLeft.setViewportView(jTree1);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{
@@ -56,34 +70,35 @@ public class ContactEditorUI extends javax.swing.JFrame {
 
                 }
         ));
-        jScrollPane3.setViewportView(jTable1);
+        jScrollPaneRight.setViewportView(jTable1);
 
-        jMenu3.setText("文件");
+        jmenuFile.setText("文件");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("打开");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jmengFileOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jmengFileOpen.setText("打开");
+        jmengFileOpen.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                // 文件打开事件
+                chooserFile(evt);
             }
         });
-        jMenu3.add(jMenuItem1);
+        jmenuFile.add(jmengFileOpen);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("退出");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemExit.setText("退出");
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem2);
+        jmenuFile.add(jMenuItemExit);
 
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(jmenuFile);
 
-        jMenu2.setText("关于");
-        jMenuBar1.add(jMenu2);
+        jMenuAbout.setText("关于");
+        jMenuBar1.add(jMenuAbout);
 
         setJMenuBar(jMenuBar1);
 
@@ -93,24 +108,41 @@ public class ContactEditorUI extends javax.swing.JFrame {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                                .addComponent(jScrollPaneLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+                                .addComponent(jScrollPaneRight, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                        .addComponent(jScrollPaneLeft)
+                        .addComponent(jScrollPaneRight, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+    /**
+     * 选择文件
+     *
+     * @param evt
+     */
+    private void chooserFile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         JFileChooser jfc = new JFileChooser();
+        //添加过滤
+        FileNameExtensionFilter ff = new FileNameExtensionFilter(null, "pdm");
+        jfc.setFileFilter(ff);
+
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        Properties properties = System.getProperties();
+        Enumeration enumeration = properties.keys();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            System.out.println("key:" + key + " , value:" + properties.getProperty(key));
+        }
+        String workingdir = System.getProperty("user.home");
+        jfc.setCurrentDirectory(new File(workingdir));
 
         File file = null;
         if (JFileChooser.APPROVE_OPTION == jfc.showOpenDialog(this)) {
@@ -181,13 +213,5 @@ public class ContactEditorUI extends javax.swing.JFrame {
         });
     }
 
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTree jTree1;
+
 }
